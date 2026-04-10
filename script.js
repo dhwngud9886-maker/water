@@ -672,11 +672,12 @@ function initAdminAddForm() {
     const tracking = val('addTracking').trim();
     const status = Number(val('addStatus'));
     const memo = val('addMemo').trim();
+    const chargeType = val('addChargeType').trim();
 
-    if (!name || !phone || !model) {
-      showMsg('addFormMsg', '이름, 휴대폰번호, 모델명은 필수 항목입니다.', 'error');
-      return;
-    }
+   if (!name || !phone || !model || !chargeType) {
+  showMsg('addFormMsg', '이름, 휴대폰번호, 모델명, 유상/무상은 필수 항목입니다.', 'error');
+  return;
+}
 
     if (!/^\d{9,11}$/.test(phone.replace(/\D/g, ''))) {
       showMsg('addFormMsg', '휴대폰번호를 정확히 입력해 주세요.', 'error');
