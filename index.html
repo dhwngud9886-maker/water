@@ -316,8 +316,8 @@
                 <input type="text" id="applyName" placeholder="홍길동" autocomplete="off" />
               </div>
               <div class="form-group">
-                <label for="applyPhone">휴대폰번호 뒤 4자리 <span class="req">*</span></label>
-                <input type="text" id="applyPhone" placeholder="1234" maxlength="4" />
+<label for="applyPhone">휴대폰번호 <span class="req">*</span></label>
+<input type="text" id="applyPhone" placeholder="01012345678" />
               </div>
             </div>
             <div class="form-group">
@@ -327,24 +327,7 @@
               </select>
             </div>
             <div class="form-row">
-              <div class="form-group">
-                <label for="applyCourier">택배사 <span class="req">*</span></label>
-                <select id="applyCourier">
-                  <option value="">선택해 주세요</option>
-                  <option>CJ대한통운</option>
-                  <option>한진택배</option>
-                  <option>로젠택배</option>
-                  <option>우체국택배</option>
-                  <option>롯데택배</option>
-                  <option>GS편의점택배</option>
-                  <option>기타</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="applyTracking">송장번호 <span class="req">*</span></label>
-                <input type="text" id="applyTracking" placeholder="123456789012" />
-              </div>
-            </div>
+      
             <div class="form-group">
               <label for="applyMemo">증상 / 요청사항 <span class="opt">(선택)</span></label>
               <textarea id="applyMemo" rows="3" placeholder="수리가 필요한 증상이나 요청사항을 입력해 주세요."></textarea>
@@ -359,7 +342,7 @@
             <div class="success-circle">✓</div>
           </div>
           <h2>신청이 완료되었습니다</h2>
-          <p>제품이 도착하면 순서에 맞게 수리를 진행합니다.<br>진행 상황은 배송 조회에서 확인하실 수 있습니다.</p>
+          <p>신청 요청이 접수되었습니다.<br>관리자 확인 후 신청완료 처리되면 배송 조회에서 확인하실 수 있습니다.</p>
           <div class="success-info" id="applySuccessInfo"></div>
           <div class="success-btns">
             <button class="btn btn-primary" data-page="inquiry">배송 조회하기</button>
@@ -477,7 +460,15 @@
       <div class="container">
 
         <!-- 통계 -->
-        <div class="stats-grid five">
+        <div class="stats-grid">
+          <div class="stat-card">
+  <div class="stat-num-row">
+    <span class="stat-val" id="adminStatPending">0</span>
+    <span class="stat-unit">건</span>
+  </div>
+  <div class="stat-lbl">신청요청</div>
+  <div class="stat-bar purple"></div>
+</div>
           <div class="stat-card">
             <div class="stat-num-row">
               <span class="stat-val" id="adminStatTotal">0</span>
@@ -551,7 +542,17 @@
             <div class="model-preview-list" id="modelPreviewList"></div>
           </div>
         </div>
+<div class="section-block">
+  <div class="block-header">
+    <div class="block-header-left">
+      <h2 class="section-title no-margin">신청 요청</h2>
+      <span class="model-count-badge" id="pendingCountBadge">0건</span>
+    </div>
+  </div>
 
+  <div id="pendingList"></div>
+  <div id="noPendingMsg" class="no-data" style="display:none">대기 중인 신청 요청이 없습니다.</div>
+</div>
         <!-- 주문 등록 -->
         <div class="section-block">
           <div class="block-header">
@@ -566,8 +567,8 @@
                   <input type="text" id="addName" placeholder="고객 이름" />
                 </div>
                 <div class="form-group">
-                  <label>휴대폰 뒤 4자리 <span class="req">*</span></label>
-                  <input type="text" id="addPhone" placeholder="1234" maxlength="4" />
+<label>휴대폰번호 <span class="req">*</span></label>
+<input type="text" id="addPhone" placeholder="01012345678" />
                 </div>
               </div>
               <div class="form-group">
@@ -599,10 +600,11 @@
                 <div class="form-group">
                   <label>상태</label>
                   <select id="addStatus">
-                    <option value="0">입고완료</option>
-                    <option value="1">AS대기중</option>
-                    <option value="2">AS완료후발송대기중</option>
-                    <option value="3">발송완료</option>
+<option value="0">신청완료</option>
+<option value="1">입고완료</option>
+<option value="2">AS대기중</option>
+<option value="3">AS완료후발송대기중</option>
+<option value="4">발송완료</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -625,11 +627,12 @@
             <h2 class="section-title no-margin">주문 목록</h2>
             <div class="table-filter">
               <select id="filterStatus">
-                <option value="all">전체 상태</option>
-                <option value="0">입고완료</option>
-                <option value="1">AS대기중</option>
-                <option value="2">AS완료후발송대기중</option>
-                <option value="3">발송완료</option>
+<option value="all">전체 상태</option>
+<option value="0">신청완료</option>
+<option value="1">입고완료</option>
+<option value="2">AS대기중</option>
+<option value="3">AS완료후발송대기중</option>
+<option value="4">발송완료</option>
               </select>
               <input type="text" id="filterSearch" placeholder="이름 / 모델명 검색" />
             </div>
