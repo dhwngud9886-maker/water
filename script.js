@@ -10,7 +10,7 @@ const ADMIN_PW = '1234';
 
 const STATUS_LABELS = ['신청완료', '입고완료', 'AS대기중', 'AS완료후발송대기중', '발송완료'];
 const STATUS_ICONS  = ['📥', '📥', '🔧', '📦', '🚚'];
-const STATUS_BADGE_CLASS = ['badge-0', 'badge-1', 'badge-2', 'badge-3'];
+const STATUS_BADGE_CLASS = ['badge-0', 'badge-1', 'badge-2', 'badge-3', 'badge-4'];
 
 // ── 기본 모델 목록 (관리자가 언제든 수정 가능) ──
 const DEFAULT_MODELS = [
@@ -31,11 +31,11 @@ const DEFAULT_MODELS = [
 ];
 
 const SAMPLE_ORDERS = [
-  { id: 1, name: '김철수', model: '직수형 정수기',       phone: '1234', courier: 'CJ대한통운', tracking: '123456789012', status: 3, regDate: '2026-04-01', memo: '누수 발생' },
-  { id: 2, name: '이영희', model: '얼음 정수기',          phone: '5678', courier: '로젠택배',   tracking: '234567890123', status: 2, regDate: '2026-04-03', memo: '얼음 배출 불량' },
-  { id: 3, name: '박민수', model: '업소용 제빙기 (소형)', phone: '9012', courier: '한진택배',   tracking: '345678901234', status: 1, regDate: '2026-04-05', memo: '제빙 불량' },
-  { id: 4, name: '최지연', model: '벽걸이 에어컨',        phone: '3456', courier: '우체국택배', tracking: '456789012345', status: 0, regDate: '2026-04-07', memo: '냉방 불량' },
-  { id: 5, name: '정우성', model: '스탠드 에어컨',        phone: '7890', courier: 'CJ대한통운', tracking: '567890123456', status: 1, regDate: '2026-04-08', memo: '실내기 소음' },
+  { id: 1, name: '김철수', model: '직수형 정수기',       phone: '1234', courier: 'CJ대한통운', tracking: '123456789012', status: 4, regDate: '2026-04-01', memo: '누수 발생' },
+  { id: 2, name: '이영희', model: '얼음 정수기',          phone: '5678', courier: '로젠택배',   tracking: '234567890123', status: 3, regDate: '2026-04-03', memo: '얼음 배출 불량' },
+  { id: 3, name: '박민수', model: '업소용 제빙기 (소형)', phone: '9012', courier: '한진택배',   tracking: '345678901234', status: 2, regDate: '2026-04-05', memo: '제빙 불량' },
+  { id: 4, name: '최지연', model: '벽걸이 에어컨',        phone: '3456', courier: '우체국택배', tracking: '456789012345', status: 1, regDate: '2026-04-07', memo: '냉방 불량' },
+  { id: 5, name: '정우성', model: '스탠드 에어컨',        phone: '7890', courier: 'CJ대한통운', tracking: '567890123456', status: 2, regDate: '2026-04-08', memo: '실내기 소음' },
 ];
 
 // ──────────────────────────────────────────
@@ -202,21 +202,13 @@ function initApplyForm() {
       showMsg('applyMsg', '모든 필수 항목을 입력해 주세요.', 'error');
       return;
     }
-    if (!/^\d{4}$/.test(phone)) {
-      showMsg('applyMsg', '휴대폰번호 뒤 4자리를 숫자 4개로 입력해 주세요.', 'error');
-      return;
-    }
+if (!/^\d{9,11}$/.test(phone.replace(/\D/g, ''))) {
+  showMsg('applyMsg', '휴대폰번호를 정확히 입력해 주세요.', 'error');
+  return;
+}
 
     hideMsg('applyMsg');
 
-    const orders = getOrders();
-    const newOrder = {
-      id: nextId(),
-      name, model, phone, courier, tracking,
-      status: 0,
-      regDate: todayStr(),
-      memo
-    };
      
 const pending = getPending();
 pending.push({
@@ -233,13 +225,12 @@ savePending(pending);
     document.getElementById('applyFormCard').style.display = 'none';
     const successEl = document.getElementById('applySuccess');
     const infoEl    = document.getElementById('applySuccessInfo');
-    infoEl.innerHTML = `
-      <strong>이름:</strong> ${escHtml(name)}<br>
-      <strong>모델명:</strong> ${escHtml(model)}<br>
-      <strong>택배사:</strong> ${escHtml(courier)}<br>
-      <strong>송장번호:</strong> ${escHtml(tracking)}<br>
-      <strong>접수일:</strong> ${todayStr()}
-    `;
+infoEl.innerHTML = `
+  <strong>이름:</strong> ${escHtml(name)}<br>
+  <strong>모델명:</strong> ${escHtml(model)}<br>
+  <strong>휴대폰번호:</strong> ${escHtml(phone)}<br>
+  <strong>신청일:</strong> ${todayStr()}
+`;
     successEl.style.display = 'block';
   });
 
@@ -276,11 +267,11 @@ function initInquiryForm() {
 
     const orders = getOrders();
     // 이름 + 모델명 + 전화번호 매칭 (대소문자 무시, 공백 무시)
-    const found = orders.find(o =>
-      normalize(o.name) === normalize(name) &&
-      normalize(o.model) === normalize(model) &&
-      o.phone === phone
-    );
+const found = orders.find(o =>
+  normalize(o.name) === normalize(name) &&
+  normalize(o.model) === normalize(model) &&
+  String(o.phone).replace(/\D/g, '').endsWith(phone)
+);
 
     if (!found) {
       showMsg('inqMsg', '입력하신 정보와 일치하는 접수 내역을 찾을 수 없습니다.\n이름, 모델명, 전화번호를 다시 확인해 주세요.', 'error');
@@ -311,6 +302,16 @@ function renderResult(order) {
   document.getElementById('trackerWrap').innerHTML = buildTracker(order.status);
 
   // 상세 정보
+  const shippingInfo = order.status === 4 ? `
+  <div class="detail-item">
+    <div class="detail-label">택배사</div>
+    <div class="detail-val">${escHtml(order.courier)}</div>
+  </div>
+  <div class="detail-item">
+    <div class="detail-label">송장번호</div>
+    <div class="detail-val">${escHtml(order.tracking)}</div>
+  </div>
+` : '';
   document.getElementById('resultDetails').innerHTML = `
     <div class="detail-item">
       <div class="detail-label">이름</div>
@@ -320,14 +321,7 @@ function renderResult(order) {
       <div class="detail-label">모델명</div>
       <div class="detail-val">${escHtml(order.model)}</div>
     </div>
-    <div class="detail-item">
-      <div class="detail-label">택배사</div>
-      <div class="detail-val">${escHtml(order.courier)}</div>
-    </div>
-    <div class="detail-item">
-      <div class="detail-label">송장번호</div>
-      <div class="detail-val">${escHtml(order.tracking)}</div>
-    </div>
+${shippingInfo}
     <div class="detail-item">
       <div class="detail-label">접수일</div>
       <div class="detail-val">${escHtml(order.regDate)}</div>
@@ -399,6 +393,7 @@ let editingId = null;  // 현재 수정 중인 ID (미사용, 향후 확장용)
 
 function initAdminPage() {
   renderAdminStats();
+  renderPendingRequests();
   renderOrderTable();
   initModelManager();
 }
@@ -511,11 +506,14 @@ function updateModelCountBadge() {
 
 function renderAdminStats() {
   const orders = getOrders();
+  const pending = getPending();
+
+  setText('adminStatPending', pending.length);
   setText('adminStatTotal', orders.length);
-  setText('adminStatIn',    orders.filter(o => o.status === 0).length);
-  setText('adminStatWait',  orders.filter(o => o.status === 1).length);
-  setText('adminStatReady', orders.filter(o => o.status === 2).length);
-  setText('adminStatDone',  orders.filter(o => o.status === 3).length);
+  setText('adminStatIn', orders.filter(o => o.status === 1).length);
+  setText('adminStatWait', orders.filter(o => o.status === 2).length);
+  setText('adminStatReady', orders.filter(o => o.status === 3).length);
+  setText('adminStatDone', orders.filter(o => o.status === 4).length);
 }
 
 function renderOrderTable(filterStatus = 'all', filterText = '') {
@@ -584,9 +582,26 @@ function updateOrderStatus(id, newStatus) {
   const orders = getOrders();
   const idx = orders.findIndex(o => o.id === id);
   if (idx === -1) return;
+
+  if (newStatus === 4) {
+    const courier = prompt('택배사를 입력하세요.');
+    if (courier === null) return;
+
+    const tracking = prompt('송장번호를 입력하세요.');
+    if (tracking === null) return;
+
+    orders[idx].courier = courier.trim();
+    orders[idx].tracking = tracking.trim();
+  }
+
   orders[idx].status = newStatus;
   saveOrders(orders);
   renderAdminStats();
+
+  const filterStatus = document.getElementById('filterStatus')?.value || 'all';
+  const filterText = document.getElementById('filterSearch')?.value || '';
+  renderOrderTable(filterStatus, filterText);
+}
   // 홈 통계도 갱신 (백그라운드)
 }
 
@@ -636,10 +651,10 @@ function initAdminAddForm() {
       showMsg('addFormMsg', '필수 항목을 모두 입력해 주세요.', 'error');
       return;
     }
-    if (!/^\d{4}$/.test(phone)) {
-      showMsg('addFormMsg', '휴대폰 뒤 4자리를 숫자 4개로 입력해 주세요.', 'error');
-      return;
-    }
+if (!/^\d{9,11}$/.test(phone.replace(/\D/g, ''))) {
+  showMsg('addFormMsg', '휴대폰번호를 정확히 입력해 주세요.', 'error');
+  return;
+}
 
     const orders = getOrders();
     orders.push({ id: nextId(), name, model, phone, courier, tracking, status, regDate: todayStr(), memo });
@@ -843,4 +858,66 @@ function getPending() {
 }
 function savePending(data) {
   localStorage.setItem('asPending', JSON.stringify(data));
+}
+function renderPendingRequests() {
+  const list = getPending();
+  const listEl = document.getElementById('pendingList');
+  const noEl = document.getElementById('noPendingMsg');
+  const badge = document.getElementById('pendingCountBadge');
+
+  if (badge) badge.textContent = `${list.length}건`;
+  if (!listEl) return;
+
+  if (list.length === 0) {
+    listEl.innerHTML = '';
+    if (noEl) noEl.style.display = 'block';
+    return;
+  }
+
+  if (noEl) noEl.style.display = 'none';
+
+  listEl.innerHTML = list.map(item => `
+    <div class="pending-card">
+      <div class="pending-info">
+        <strong>${escHtml(item.name)}</strong> / ${escHtml(item.model)} / ${escHtml(item.phone)}
+        ${item.memo ? `<div class="pending-memo">${escHtml(item.memo)}</div>` : ''}
+      </div>
+      <button class="btn btn-sm btn-primary pending-accept-btn" data-id="${item.id}">수락</button>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.pending-accept-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      acceptPendingRequest(Number(this.dataset.id));
+    });
+  });
+}
+
+function acceptPendingRequest(id) {
+  const pending = getPending();
+  const target = pending.find(item => item.id === id);
+  if (!target) return;
+
+  savePending(pending.filter(item => item.id !== id));
+
+  const orders = getOrders();
+  orders.push({
+    id: nextId(),
+    name: target.name,
+    model: target.model,
+    phone: target.phone,
+    courier: '',
+    tracking: '',
+    status: 0,
+    regDate: todayStr(),
+    memo: target.memo || ''
+  });
+  saveOrders(orders);
+
+  renderAdminStats();
+  renderPendingRequests();
+  renderOrderTable(
+    document.getElementById('filterStatus')?.value || 'all',
+    document.getElementById('filterSearch')?.value || ''
+  );
 }
