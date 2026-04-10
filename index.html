@@ -8,49 +8,55 @@
 </head>
 <body>
 
-  <!-- ============================
+  <!-- ============================================================
        NAVBAR
-  ============================= -->
+  ============================================================ -->
   <nav class="navbar">
     <div class="nav-inner">
       <a class="brand" href="#" data-page="home">
-        <div class="brand-icon">⚙</div>
-        <div>
-          <div class="brand-name">AS센터</div>
-          <div class="brand-sub">고객 서비스</div>
-        </div>
+        <svg class="brand-icon-svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="#1D1D1F"/>
+          <path d="M14 6C9.58 6 6 9.58 6 14s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm0 3a2 2 0 110 4 2 2 0 010-4zm0 11c-2.67 0-5-1.33-5-2v-.5c0-.67 2.33-2 5-2s5 1.33 5 2v.5c0 .67-2.33 2-5 2z" fill="white" opacity="0.9"/>
+        </svg>
+        <span class="brand-name">AS센터</span>
       </a>
+
       <ul class="nav-links" id="navLinks">
         <li><a class="nav-btn active" href="#" data-page="home">AS 현황</a></li>
         <li><a class="nav-btn" href="#" data-page="apply">AS 신청</a></li>
         <li><a class="nav-btn" href="#" data-page="inquiry">배송 조회</a></li>
-        <li><a class="nav-btn nav-admin" href="#" data-page="login" id="adminNavBtn">🔐 관리자</a></li>
+        <li><a class="nav-btn nav-admin" href="#" data-page="login" id="adminNavBtn">관리자</a></li>
       </ul>
+
       <button class="hamburger" id="hamburger" aria-label="메뉴">
         <span></span><span></span><span></span>
       </button>
     </div>
+
     <div class="mobile-menu" id="mobileMenu">
-      <a href="#" data-page="home">🏠 AS 현황</a>
-      <a href="#" data-page="apply">📋 AS 신청</a>
-      <a href="#" data-page="inquiry">🔍 배송 조회</a>
-      <a href="#" data-page="login" id="adminNavMobile">🔐 관리자</a>
+      <a href="#" data-page="home">AS 현황</a>
+      <a href="#" data-page="apply">AS 신청</a>
+      <a href="#" data-page="inquiry">배송 조회</a>
+      <a href="#" data-page="login" id="adminNavMobile">관리자</a>
     </div>
   </nav>
 
   <main id="main">
 
-    <!-- ============================
-         PAGE 1: AS 현황 (홈)
-    ============================= -->
+    <!-- ============================================================
+         PAGE 1 — AS 현황 (홈)
+    ============================================================ -->
     <section id="page-home" class="page active">
+
+      <!-- Hero -->
       <div class="page-hero">
         <div class="hero-inner">
-          <h1>AS 현황</h1>
-          <p>실시간 접수 현황 및 예상 소요 기간을 확인하세요.</p>
+          <div class="hero-eyebrow">실시간 현황</div>
+          <h1>투명하고 빠른<br>AS 서비스</h1>
+          <p>접수 현황과 예상 소요 기간을 실시간으로 확인하고<br>진행 상태를 언제 어디서나 추적하세요.</p>
           <div class="hero-btns">
-            <button class="btn btn-primary" data-page="apply">AS 신청하기</button>
-            <button class="btn btn-outline-white" data-page="inquiry">배송 조회</button>
+            <button class="btn btn-hero-primary" data-page="apply">AS 신청하기</button>
+            <button class="btn btn-hero-ghost" data-page="inquiry">배송 조회 →</button>
           </div>
         </div>
       </div>
@@ -60,96 +66,138 @@
         <!-- 통계 카드 -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon-wrap blue">📦</div>
-            <div class="stat-body">
-              <div class="stat-val" id="statTotal">0</div>
-              <div class="stat-lbl">전체 접수</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="statTotal">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">전체 접수</div>
+            <div class="stat-bar blue"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap yellow">⏳</div>
-            <div class="stat-body">
-              <div class="stat-val" id="statPending">0</div>
-              <div class="stat-lbl">입고 / 대기</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="statPending">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">입고 / 대기</div>
+            <div class="stat-bar yellow"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap orange">🔧</div>
-            <div class="stat-body">
-              <div class="stat-val" id="statProgress">0</div>
-              <div class="stat-lbl">수리 진행중</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="statProgress">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">수리 진행중</div>
+            <div class="stat-bar orange"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap green">🚚</div>
-            <div class="stat-body">
-              <div class="stat-val" id="statDone">0</div>
-              <div class="stat-lbl">발송 완료</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="statDone">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">발송 완료</div>
+            <div class="stat-bar green"></div>
           </div>
         </div>
 
         <!-- 예상 기간 배너 -->
         <div class="estimate-banner">
           <div class="estimate-left">
-            <div class="est-label">지금 신청 시 예상 소요 기간</div>
+            <p class="est-label">지금 신청 시 예상 소요 기간</p>
             <div class="est-days" id="estimateDays">계산 중...</div>
+            <p class="est-sub">현재 대기 건수 기준으로 자동 산정됩니다</p>
           </div>
           <div class="estimate-right">
-            <div class="est-note">※ 제품 상태 및 부품 수급에 따라<br>기간이 달라질 수 있습니다.</div>
+            <div class="est-note-box">
+              <span class="est-note-icon">ℹ</span>
+              <p>제품 상태 및 부품 수급에 따라 기간이 달라질 수 있습니다.</p>
+            </div>
           </div>
         </div>
 
-        <!-- AS 프로세스 안내 -->
+        <!-- AS 프로세스 -->
         <div class="section-block">
-          <h2 class="section-title">AS 진행 프로세스</h2>
+          <div class="section-head">
+            <div class="section-eyebrow">Process</div>
+            <h2 class="section-title">AS 진행 단계</h2>
+            <p class="section-sub">접수부터 반송까지 4단계로 투명하게 진행됩니다</p>
+          </div>
           <div class="process-tracker">
             <div class="pt-step">
-              <div class="pt-icon done">📥</div>
-              <div class="pt-label done">입고완료</div>
+              <div class="pt-icon-wrap done">
+                <span class="pt-emoji">📥</span>
+              </div>
+              <div class="pt-step-body">
+                <div class="pt-label done">입고완료</div>
+                <div class="pt-desc">제품 수령 확인</div>
+              </div>
             </div>
             <div class="pt-line done"></div>
             <div class="pt-step">
-              <div class="pt-icon active-demo">🔧</div>
-              <div class="pt-label active-demo">AS대기중</div>
+              <div class="pt-icon-wrap active-demo">
+                <span class="pt-emoji">🔧</span>
+              </div>
+              <div class="pt-step-body">
+                <div class="pt-label active-demo">AS대기중</div>
+                <div class="pt-desc">수리 대기 중</div>
+              </div>
             </div>
             <div class="pt-line"></div>
             <div class="pt-step">
-              <div class="pt-icon">📦</div>
-              <div class="pt-label">AS완료후<br>발송대기중</div>
+              <div class="pt-icon-wrap">
+                <span class="pt-emoji">📦</span>
+              </div>
+              <div class="pt-step-body">
+                <div class="pt-label">AS완료 후<br>발송대기중</div>
+                <div class="pt-desc">반송 준비 중</div>
+              </div>
             </div>
             <div class="pt-line"></div>
             <div class="pt-step">
-              <div class="pt-icon">🚚</div>
-              <div class="pt-label">발송완료</div>
+              <div class="pt-icon-wrap">
+                <span class="pt-emoji">🚚</span>
+              </div>
+              <div class="pt-step-body">
+                <div class="pt-label">발송완료</div>
+                <div class="pt-desc">배송 중</div>
+              </div>
             </div>
           </div>
-          <p class="process-note">위 단계를 통해 진행 상황을 투명하게 안내해 드립니다.</p>
         </div>
 
         <!-- 서비스 안내 -->
-        <div class="section-block">
-          <h2 class="section-title">서비스 안내</h2>
+        <div class="section-block borderless">
+          <div class="section-head">
+            <div class="section-eyebrow">Service Guide</div>
+            <h2 class="section-title">서비스 안내</h2>
+          </div>
           <div class="info-grid">
             <div class="info-card">
-              <div class="info-icon">📬</div>
+              <div class="info-icon-wrap" style="background:#EFF6FF">
+                <span>📬</span>
+              </div>
               <h3>접수 방법</h3>
-              <p>택배를 통해 제품을 발송해 주세요. AS 신청 페이지에서 사전 접수 후 발송하시면 더욱 빠른 처리가 가능합니다.</p>
+              <p>택배를 통해 제품을 발송해 주세요. 사전 접수 후 발송하시면 더욱 빠르게 처리됩니다.</p>
             </div>
             <div class="info-card">
-              <div class="info-icon">🔍</div>
+              <div class="info-icon-wrap" style="background:#F0FDF4">
+                <span>🔍</span>
+              </div>
               <h3>진행 상태 확인</h3>
-              <p>배송 조회 메뉴에서 이름, 모델명, 휴대폰 뒷 4자리 입력 시 현재 수리 진행 상태를 실시간으로 확인하실 수 있습니다.</p>
+              <p>배송 조회에서 이름, 모델명, 휴대폰 뒷 4자리 입력 시 실시간으로 진행 상태를 확인하실 수 있습니다.</p>
             </div>
             <div class="info-card">
-              <div class="info-icon">🚚</div>
+              <div class="info-icon-wrap" style="background:#FFF7ED">
+                <span>🚚</span>
+              </div>
               <h3>반송 안내</h3>
               <p>수리 완료 후 등록하신 주소로 반송해 드립니다. 유상 수리의 경우 반송 택배비는 고객 부담입니다.</p>
             </div>
             <div class="info-card">
-              <div class="info-icon">📞</div>
+              <div class="info-icon-wrap" style="background:#F5F3FF">
+                <span>📞</span>
+              </div>
               <h3>운영 시간</h3>
-              <p>평일 09:00 ~ 18:00<br>(점심시간 12:00 ~ 13:00 제외)<br>이메일 문의도 가능합니다.</p>
+              <p>평일 09:00 ~ 18:00<br>(점심 12:00 ~ 13:00 제외)<br>이메일 문의도 가능합니다.</p>
             </div>
           </div>
         </div>
@@ -157,45 +205,45 @@
       </div>
     </section>
 
-    <!-- ============================
-         PAGE 2: AS 신청 (고객)
-    ============================= -->
+    <!-- ============================================================
+         PAGE 2 — AS 신청
+    ============================================================ -->
     <section id="page-apply" class="page">
       <div class="page-hero small">
         <div class="hero-inner">
-          <h1>AS 신청</h1>
-          <p>제품 정보를 입력하시면 접수 완료 후 처리해 드립니다.</p>
+          <div class="hero-eyebrow">AS 신청</div>
+          <h1>간편하게<br>신청하세요</h1>
+          <p>정확한 정보를 입력하시면 빠르게 처리해 드립니다.</p>
         </div>
       </div>
 
       <div class="container narrow">
-
         <div class="form-card" id="applyFormCard">
-          <h2 class="form-title">신청서 작성</h2>
-          <p class="form-desc">모든 항목을 정확하게 입력해 주세요.<br>접수 후 상태는 <strong>배송 조회</strong>에서 확인하실 수 있습니다.</p>
+          <div class="form-card-header">
+            <h2 class="form-title">신청서 작성</h2>
+            <p class="form-desc">접수 후 상태는 <strong>배송 조회</strong>에서 확인하실 수 있습니다.</p>
+          </div>
 
           <form id="applyForm" novalidate>
             <div class="form-row">
               <div class="form-group">
                 <label for="applyName">이름 <span class="req">*</span></label>
-                <input type="text" id="applyName" placeholder="예) 홍길동" autocomplete="off" />
+                <input type="text" id="applyName" placeholder="홍길동" autocomplete="off" />
               </div>
               <div class="form-group">
                 <label for="applyPhone">휴대폰번호 뒤 4자리 <span class="req">*</span></label>
-                <input type="text" id="applyPhone" placeholder="예) 1234" maxlength="4" />
+                <input type="text" id="applyPhone" placeholder="1234" maxlength="4" />
               </div>
             </div>
-
             <div class="form-group">
               <label for="applyModel">모델명 <span class="req">*</span></label>
-              <input type="text" id="applyModel" placeholder="예) Galaxy S24 Ultra, iPhone 15 Pro" />
+              <input type="text" id="applyModel" placeholder="Galaxy S24 Ultra, iPhone 15 Pro …" />
             </div>
-
             <div class="form-row">
               <div class="form-group">
                 <label for="applyCourier">택배사 <span class="req">*</span></label>
                 <select id="applyCourier">
-                  <option value="">택배사 선택</option>
+                  <option value="">선택해 주세요</option>
                   <option>CJ대한통운</option>
                   <option>한진택배</option>
                   <option>로젠택배</option>
@@ -207,62 +255,62 @@
               </div>
               <div class="form-group">
                 <label for="applyTracking">송장번호 <span class="req">*</span></label>
-                <input type="text" id="applyTracking" placeholder="예) 123456789012" />
+                <input type="text" id="applyTracking" placeholder="123456789012" />
               </div>
             </div>
-
             <div class="form-group">
-              <label for="applyMemo">증상 / 요청사항</label>
+              <label for="applyMemo">증상 / 요청사항 <span class="opt">(선택)</span></label>
               <textarea id="applyMemo" rows="3" placeholder="수리가 필요한 증상이나 요청사항을 입력해 주세요."></textarea>
             </div>
-
             <div id="applyMsg" class="form-msg error" style="display:none"></div>
             <button type="submit" class="btn btn-primary full-width">신청서 제출하기</button>
           </form>
         </div>
 
-        <!-- 제출 성공 결과 -->
         <div class="success-card" id="applySuccess" style="display:none">
-          <div class="success-icon">✅</div>
-          <h2>AS 신청이 완료되었습니다!</h2>
-          <p>제품이 도착하면 입고 처리 후 순서에 맞게 수리가 진행됩니다.<br>진행 상황은 <strong>배송 조회</strong>에서 확인하실 수 있습니다.</p>
+          <div class="success-icon-wrap">
+            <div class="success-circle">✓</div>
+          </div>
+          <h2>신청이 완료되었습니다</h2>
+          <p>제품이 도착하면 순서에 맞게 수리를 진행합니다.<br>진행 상황은 배송 조회에서 확인하실 수 있습니다.</p>
           <div class="success-info" id="applySuccessInfo"></div>
           <div class="success-btns">
             <button class="btn btn-primary" data-page="inquiry">배송 조회하기</button>
-            <button class="btn btn-outline" id="applyAgainBtn">추가 신청하기</button>
+            <button class="btn btn-secondary" id="applyAgainBtn">추가 신청하기</button>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- ============================
-         PAGE 3: 배송 조회 (고객)
-    ============================= -->
+    <!-- ============================================================
+         PAGE 3 — 배송 조회
+    ============================================================ -->
     <section id="page-inquiry" class="page">
       <div class="page-hero small">
         <div class="hero-inner">
-          <h1>배송 조회</h1>
-          <p>이름, 모델명, 휴대폰번호 뒤 4자리로 조회하세요.</p>
+          <div class="hero-eyebrow">배송 조회</div>
+          <h1>내 제품의 현재<br>상태를 확인하세요</h1>
+          <p>이름, 모델명, 휴대폰번호 뒤 4자리로 조회합니다.</p>
         </div>
       </div>
 
       <div class="container narrow">
-
         <div class="form-card">
-          <h2 class="form-title">주문 조회</h2>
+          <div class="form-card-header">
+            <h2 class="form-title">주문 조회</h2>
+          </div>
           <form id="inquiryForm" novalidate>
             <div class="form-group">
               <label for="inqName">이름 <span class="req">*</span></label>
-              <input type="text" id="inqName" placeholder="예) 홍길동" />
+              <input type="text" id="inqName" placeholder="홍길동" />
             </div>
             <div class="form-group">
               <label for="inqModel">모델명 <span class="req">*</span></label>
-              <input type="text" id="inqModel" placeholder="예) Galaxy S24 Ultra" />
+              <input type="text" id="inqModel" placeholder="Galaxy S24 Ultra" />
             </div>
             <div class="form-group">
               <label for="inqPhone">휴대폰번호 뒤 4자리 <span class="req">*</span></label>
-              <input type="text" id="inqPhone" placeholder="예) 1234" maxlength="4" />
+              <input type="text" id="inqPhone" placeholder="1234" maxlength="4" />
             </div>
             <div id="inqMsg" class="form-msg error" style="display:none"></div>
             <button type="submit" class="btn btn-primary full-width">조회하기</button>
@@ -272,103 +320,118 @@
         <!-- 조회 결과 -->
         <div id="inquiryResult" style="display:none">
           <div class="result-card">
-            <div class="result-header">
-              <h2>조회 결과</h2>
+            <div class="result-card-top">
+              <div>
+                <p class="result-pretitle">조회 결과</p>
+                <h2 class="result-title" id="resultTitle">-</h2>
+              </div>
               <span class="result-badge" id="resultBadge"></span>
             </div>
-
-            <!-- 스텝 트래커 -->
             <div class="tracker-wrap" id="trackerWrap"></div>
-
-            <!-- 상세 정보 -->
             <div class="result-details" id="resultDetails"></div>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- ============================
-         PAGE 4: 관리자 로그인
-    ============================= -->
+    <!-- ============================================================
+         PAGE 4 — 관리자 로그인
+    ============================================================ -->
     <section id="page-login" class="page">
-      <div class="login-wrap">
+      <div class="login-scene">
         <div class="login-card">
-          <div class="login-logo">⚙</div>
-          <h2>관리자 로그인</h2>
+          <div class="login-logo-wrap">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <rect width="44" height="44" rx="12" fill="#1D1D1F"/>
+              <path d="M22 10C15.37 10 10 15.37 10 22s5.37 12 12 12 12-5.37 12-12-5.37-12-12-12zm0 4.5a3 3 0 110 6 3 3 0 010-6zm0 16.5c-4 0-7.5-2-7.5-3v-.75c0-1 3.5-3 7.5-3s7.5 2 7.5 3v.75c0 1-3.5 3-7.5 3z" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+          <h2 class="login-title">관리자 로그인</h2>
           <p class="login-desc">AS센터 관리자 전용 페이지입니다.</p>
           <form id="loginForm" novalidate>
             <div class="form-group">
               <label for="loginId">아이디</label>
-              <input type="text" id="loginId" placeholder="아이디 입력" autocomplete="username" />
+              <input type="text" id="loginId" placeholder="아이디를 입력하세요" autocomplete="username" />
             </div>
             <div class="form-group">
               <label for="loginPw">비밀번호</label>
-              <input type="password" id="loginPw" placeholder="비밀번호 입력" autocomplete="current-password" />
+              <input type="password" id="loginPw" placeholder="비밀번호를 입력하세요" autocomplete="current-password" />
             </div>
             <div id="loginMsg" class="form-msg error" style="display:none"></div>
             <button type="submit" class="btn btn-primary full-width">로그인</button>
           </form>
-          <p class="login-hint">※ 데모 계정: <strong>admin</strong> / <strong>1234</strong></p>
+          <div class="login-demo">
+            <span>데모 계정</span>
+            <code>admin / 1234</code>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ============================
-         PAGE 5: 관리자 대시보드
-    ============================= -->
+    <!-- ============================================================
+         PAGE 5 — 관리자 대시보드
+    ============================================================ -->
     <section id="page-admin" class="page">
+
       <div class="admin-topbar">
         <div class="container">
           <div class="admin-topbar-inner">
-            <h1>관리자 대시보드</h1>
-            <button class="btn btn-sm btn-outline" id="logoutBtn">로그아웃</button>
+            <div class="admin-top-left">
+              <div class="admin-dot"></div>
+              <h1>대시보드</h1>
+            </div>
+            <button class="btn btn-sm btn-logout" id="logoutBtn">로그아웃</button>
           </div>
         </div>
       </div>
 
       <div class="container">
 
-        <!-- 관리자 통계 -->
+        <!-- 통계 -->
         <div class="stats-grid five">
           <div class="stat-card">
-            <div class="stat-icon-wrap blue">📋</div>
-            <div class="stat-body">
-              <div class="stat-val" id="adminStatTotal">0</div>
-              <div class="stat-lbl">전체</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="adminStatTotal">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">전체</div>
+            <div class="stat-bar blue"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap yellow">📥</div>
-            <div class="stat-body">
-              <div class="stat-val" id="adminStatIn">0</div>
-              <div class="stat-lbl">입고완료</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="adminStatIn">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">입고완료</div>
+            <div class="stat-bar yellow"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap orange">🔧</div>
-            <div class="stat-body">
-              <div class="stat-val" id="adminStatWait">0</div>
-              <div class="stat-lbl">AS대기중</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="adminStatWait">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">AS대기중</div>
+            <div class="stat-bar orange"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap purple">📦</div>
-            <div class="stat-body">
-              <div class="stat-val" id="adminStatReady">0</div>
-              <div class="stat-lbl">발송대기중</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="adminStatReady">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">발송대기중</div>
+            <div class="stat-bar purple"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon-wrap green">🚚</div>
-            <div class="stat-body">
-              <div class="stat-val" id="adminStatDone">0</div>
-              <div class="stat-lbl">발송완료</div>
+            <div class="stat-num-row">
+              <span class="stat-val" id="adminStatDone">0</span>
+              <span class="stat-unit">건</span>
             </div>
+            <div class="stat-lbl">발송완료</div>
+            <div class="stat-bar green"></div>
           </div>
         </div>
 
-        <!-- 주문 등록 폼 -->
+        <!-- 주문 등록 -->
         <div class="section-block">
           <div class="block-header">
             <h2 class="section-title no-margin">신규 주문 등록</h2>
@@ -394,7 +457,7 @@
                 <div class="form-group">
                   <label>택배사 <span class="req">*</span></label>
                   <select id="addCourier">
-                    <option value="">택배사 선택</option>
+                    <option value="">선택해 주세요</option>
                     <option>CJ대한통운</option>
                     <option>한진택배</option>
                     <option>로젠택배</option>
@@ -426,8 +489,8 @@
               </div>
               <div id="addFormMsg" class="form-msg error" style="display:none"></div>
               <div class="add-form-btns">
-                <button type="submit" class="btn btn-primary">등록</button>
-                <button type="button" class="btn btn-outline" id="cancelAddForm">취소</button>
+                <button type="submit" class="btn btn-primary">등록하기</button>
+                <button type="button" class="btn btn-secondary" id="cancelAddForm">취소</button>
               </div>
             </form>
           </div>
@@ -448,7 +511,6 @@
               <input type="text" id="filterSearch" placeholder="이름 / 모델명 검색" />
             </div>
           </div>
-
           <div class="table-wrap">
             <table class="order-table">
               <thead>
@@ -461,7 +523,7 @@
                   <th>송장번호</th>
                   <th>접수일</th>
                   <th>상태 변경</th>
-                  <th>삭제</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="orderTableBody"></tbody>
@@ -475,10 +537,17 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="container">
-      <p>© 2026 AS센터 &nbsp;|&nbsp; 고객 서비스 센터 &nbsp;|&nbsp; 평일 09:00 ~ 18:00</p>
+      <div class="footer-inner">
+        <span class="footer-brand">AS센터</span>
+        <span class="footer-divider">|</span>
+        <span>고객 서비스 센터</span>
+        <span class="footer-divider">|</span>
+        <span>평일 09:00 ~ 18:00</span>
+        <span class="footer-divider">|</span>
+        <span>© 2026</span>
+      </div>
     </div>
   </footer>
 
