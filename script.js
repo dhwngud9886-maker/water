@@ -1,3 +1,36 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB6YnIk-nodPtaaNQLs9tvOn2Zk1jdSu_8",
+  authDomain: "wateras-710bf.firebaseapp.com",
+  projectId: "wateras-710bf",
+  storageBucket: "wateras-710bf.firebasestorage.app",
+  messagingSenderId: "906227350650",
+  appId: "1:906227350650:web:bc091ad94124e44ee28fc3",
+  measurementId: "G-XN45XFGQBH"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 /* ===========================================
    AS센터 — script.js
    =========================================== */
