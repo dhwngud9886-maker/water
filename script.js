@@ -171,10 +171,9 @@ function updateAdminNavLabel() {
 function initHomePage() {
   const orders = getOrders();
   const total    = orders.length;
-  const pending  = orders.filter(o => o.status === 0 || o.status === 1).length;
-  const progress = orders.filter(o => o.status === 2).length;
-  const done     = orders.filter(o => o.status === 3).length;
-
+const pending  = orders.filter(o => o.status === 0 || o.status === 1).length;
+const progress = orders.filter(o => o.status === 2 || o.status === 3).length;
+const done     = orders.filter(o => o.status === 4).length;
   setText('statTotal',    total);
   setText('statPending',  pending);
   setText('statProgress', progress);
@@ -603,7 +602,6 @@ function updateOrderStatus(id, newStatus) {
   renderOrderTable(filterStatus, filterText);
 }
   // 홈 통계도 갱신 (백그라운드)
-}
 
 function deleteOrder(id) {
   const orders = getOrders().filter(o => o.id !== id);
