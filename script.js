@@ -1,0 +1,581 @@
+/* ===========================================
+   AS센터 — script.js
+   =========================================== */
+
+// ──────────────────────────────────────────
+//  상수 & 데이터
+// ──────────────────────────────────────────
+const ADMIN_ID = 'admin';
+const ADMIN_PW = '1234';
+
+const STATUS_LABELS = ['입고완료', 'AS대기중', 'AS완료후발송대기중', '발송완료'];
+const STATUS_ICONS  = ['📥', '🔧', '📦', '🚚'];
+const STATUS_BADGE_CLASS = ['badge-0', 'badge-1', 'badge-2', 'badge-3'];
+
+const SAMPLE_ORDERS = [
+  { id: 1, name: '김철수', model: 'Galaxy S24 Ultra', phone: '1234', courier: 'CJ대한통운', tracking: '123456789012', status: 3, regDate: '2026-04-01', memo: '액정 파손' },
+  { id: 2, name: '이영희', model: 'iPhone 15 Pro', phone: '5678', courier: '로젠택배',   tracking: '234567890123', status: 2, regDate: '2026-04-03', memo: '배터리 교체' },
+  { id: 3, name: '박민수', model: 'Galaxy Tab S9',  phone: '9012', courier: '한진택배',  tracking: '345678901234', status: 1, regDate: '2026-04-05', memo: '터치 불량' },
+  { id: 4, name: '최지연', model: 'MacBook Air M2', phone: '3456', courier: '우체국택배', tracking: '456789012345', status: 0, regDate: '2026-04-07', memo: '키보드 수리' },
+  { id: 5, name: '정우성', model: 'iPad Pro 12.9',  phone: '7890', courier: 'CJ대한통운', tracking: '567890123456', status: 1, regDate: '2026-04-08', memo: '충전 불량' },
+];
+
+// ──────────────────────────────────────────
+//  localStorage 헬퍼
+// ──────────────────────────────────────────
+function getOrders() {
+  const raw = localStorage.getItem('asOrders');
+  if (!raw) {
+    // 첫 방문 시 샘플 데이터 삽입
+    saveOrders(SAMPLE_ORDERS);
+    return SAMPLE_ORDERS;
+  }
+  return JSON.parse(raw);
+}
+
+function saveOrders(orders) {
+  localStorage.setItem('asOrders', JSON.stringify(orders));
+}
+
+function isAdminLoggedIn() {
+  return sessionStorage.getItem('adminLoggedIn') === 'true';
+}
+
+function setAdminLogin(val) {
+  if (val) sessionStorage.setItem('adminLoggedIn', 'true');
+  else sessionStorage.removeItem('adminLoggedIn');
+}
+
+function nextId() {
+  const orders = getOrders();
+  return orders.length ? Math.max(...orders.map(o => o.id)) + 1 : 1;
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// ──────────────────────────────────────────
+//  페이지 라우팅
+// ──────────────────────────────────────────
+let currentPage = 'home';
+
+function navigateTo(pageId) {
+  // 관리자 페이지 보호
+  if (pageId === 'admin' && !isAdminLoggedIn()) {
+    pageId = 'login';
+  }
+  // 이미 로그인된 상태면 login → admin 으로
+  if (pageId === 'login' && isAdminLoggedIn()) {
+    pageId = 'admin';
+  }
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId);
+  if (!target) return;
+  target.classList.add('active');
+  currentPage = pageId;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // 네비 active 표시 갱신
+  updateNavActive(pageId);
+
+  // 페이지별 초기화
+  if (pageId === 'home')    initHomePage();
+  if (pageId === 'admin')   initAdminPage();
+  if (pageId === 'inquiry') resetInquiry();
+
+  // 관리자 nav 버튼 텍스트
+  updateAdminNavLabel();
+}
+
+function updateNavActive(pageId) {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  // home / apply / inquiry / login or admin
+  const targetPage = (pageId === 'admin') ? 'login' : pageId;
+  document.querySelectorAll(`.nav-btn[data-page="${targetPage}"]`).forEach(btn => {
+    btn.classList.add('active');
+  });
+  if (pageId === 'admin') {
+    document.querySelectorAll('.nav-btn.nav-admin').forEach(btn => btn.classList.add('active'));
+  }
+}
+
+function updateAdminNavLabel() {
+  const btns = document.querySelectorAll('#adminNavBtn, #adminNavMobile');
+  if (isAdminLoggedIn()) {
+    btns.forEach(b => { b.textContent = '⚙ 관리자'; });
+  } else {
+    btns.forEach(b => { b.textContent = '🔐 관리자'; });
+  }
+}
+
+// ──────────────────────────────────────────
+//  홈 페이지 — 통계 & 예상 기간
+// ──────────────────────────────────────────
+function initHomePage() {
+  const orders = getOrders();
+  const total    = orders.length;
+  const pending  = orders.filter(o => o.status === 0 || o.status === 1).length;
+  const progress = orders.filter(o => o.status === 2).length;
+  const done     = orders.filter(o => o.status === 3).length;
+
+  setText('statTotal',    total);
+  setText('statPending',  pending);
+  setText('statProgress', progress);
+  setText('statDone',     done);
+
+  // 예상 기간: 대기 건수 × 1.5일 + 최소 3일
+  const days = pending === 0 ? 3 : Math.max(3, Math.ceil(pending * 1.5));
+  setText('estimateDays', `약 ${days}일`);
+}
+
+// ──────────────────────────────────────────
+//  AS 신청 폼
+// ──────────────────────────────────────────
+function initApplyForm() {
+  const form = document.getElementById('applyForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name     = val('applyName').trim();
+    const phone    = val('applyPhone').trim();
+    const model    = val('applyModel').trim();
+    const courier  = val('applyCourier').trim();
+    const tracking = val('applyTracking').trim();
+    const memo     = val('applyMemo').trim();
+
+    if (!name || !phone || !model || !courier || !tracking) {
+      showMsg('applyMsg', '모든 필수 항목을 입력해 주세요.', 'error');
+      return;
+    }
+    if (!/^\d{4}$/.test(phone)) {
+      showMsg('applyMsg', '휴대폰번호 뒤 4자리를 숫자 4개로 입력해 주세요.', 'error');
+      return;
+    }
+
+    hideMsg('applyMsg');
+
+    const orders = getOrders();
+    const newOrder = {
+      id: nextId(),
+      name, model, phone, courier, tracking,
+      status: 0,
+      regDate: todayStr(),
+      memo
+    };
+    orders.push(newOrder);
+    saveOrders(orders);
+
+    // 성공 화면
+    document.getElementById('applyFormCard').style.display = 'none';
+    const successEl = document.getElementById('applySuccess');
+    const infoEl    = document.getElementById('applySuccessInfo');
+    infoEl.innerHTML = `
+      <strong>이름:</strong> ${escHtml(name)}<br>
+      <strong>모델명:</strong> ${escHtml(model)}<br>
+      <strong>택배사:</strong> ${escHtml(courier)}<br>
+      <strong>송장번호:</strong> ${escHtml(tracking)}<br>
+      <strong>접수일:</strong> ${todayStr()}
+    `;
+    successEl.style.display = 'block';
+  });
+
+  document.getElementById('applyAgainBtn').addEventListener('click', function() {
+    document.getElementById('applyFormCard').style.display = '';
+    document.getElementById('applySuccess').style.display = 'none';
+    document.getElementById('applyForm').reset();
+    hideMsg('applyMsg');
+  });
+}
+
+// ──────────────────────────────────────────
+//  배송 조회 (스텝 트래커)
+// ──────────────────────────────────────────
+function initInquiryForm() {
+  const form = document.getElementById('inquiryForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name  = val('inqName').trim();
+    const model = val('inqModel').trim();
+    const phone = val('inqPhone').trim();
+
+    if (!name || !model || !phone) {
+      showMsg('inqMsg', '모든 항목을 입력해 주세요.', 'error');
+      return;
+    }
+    if (!/^\d{4}$/.test(phone)) {
+      showMsg('inqMsg', '휴대폰번호 뒤 4자리를 숫자 4개로 입력해 주세요.', 'error');
+      return;
+    }
+
+    hideMsg('inqMsg');
+
+    const orders = getOrders();
+    // 이름 + 모델명 + 전화번호 매칭 (대소문자 무시, 공백 무시)
+    const found = orders.find(o =>
+      normalize(o.name) === normalize(name) &&
+      normalize(o.model) === normalize(model) &&
+      o.phone === phone
+    );
+
+    if (!found) {
+      showMsg('inqMsg', '입력하신 정보와 일치하는 접수 내역을 찾을 수 없습니다.\n이름, 모델명, 전화번호를 다시 확인해 주세요.', 'error');
+      document.getElementById('inquiryResult').style.display = 'none';
+      return;
+    }
+
+    renderResult(found);
+  });
+}
+
+function resetInquiry() {
+  document.getElementById('inquiryResult').style.display = 'none';
+  hideMsg('inqMsg');
+}
+
+function renderResult(order) {
+  // 배지
+  const badge = document.getElementById('resultBadge');
+  badge.textContent = STATUS_LABELS[order.status];
+  badge.className = 'result-badge ' + STATUS_BADGE_CLASS[order.status];
+
+  // 트래커
+  document.getElementById('trackerWrap').innerHTML = buildTracker(order.status);
+
+  // 상세 정보
+  document.getElementById('resultDetails').innerHTML = `
+    <div class="detail-item">
+      <div class="detail-label">이름</div>
+      <div class="detail-val">${escHtml(order.name)}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">모델명</div>
+      <div class="detail-val">${escHtml(order.model)}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">택배사</div>
+      <div class="detail-val">${escHtml(order.courier)}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">송장번호</div>
+      <div class="detail-val">${escHtml(order.tracking)}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">접수일</div>
+      <div class="detail-val">${escHtml(order.regDate)}</div>
+    </div>
+    <div class="detail-item">
+      <div class="detail-label">현재 상태</div>
+      <div class="detail-val"><span class="s-badge s${order.status}">${STATUS_LABELS[order.status]}</span></div>
+    </div>
+    ${order.memo ? `
+    <div class="detail-item" style="grid-column:1/-1">
+      <div class="detail-label">메모 / 증상</div>
+      <div class="detail-val">${escHtml(order.memo)}</div>
+    </div>` : ''}
+  `;
+
+  document.getElementById('inquiryResult').style.display = 'block';
+  document.getElementById('inquiryResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildTracker(status) {
+  let html = '<div class="tracker">';
+  STATUS_LABELS.forEach((label, i) => {
+    const isDone   = i < status;
+    const isActive = i === status;
+    const iconCls  = isDone ? 't-done' : (isActive ? 't-active' : '');
+    const lblCls   = isDone ? 't-done' : (isActive ? 't-active' : '');
+    const labelHtml = label === 'AS완료후발송대기중'
+      ? 'AS완료후<br>발송대기중'
+      : label;
+
+    html += `
+      <div class="tracker-step">
+        <div class="tracker-icon ${iconCls}">${STATUS_ICONS[i]}</div>
+        <div class="tracker-label ${lblCls}">${labelHtml}</div>
+      </div>
+    `;
+    if (i < STATUS_LABELS.length - 1) {
+      html += `<div class="tracker-connector ${isDone ? 't-done' : ''}"></div>`;
+    }
+  });
+  html += '</div>';
+  return html;
+}
+
+// ──────────────────────────────────────────
+//  관리자 로그인
+// ──────────────────────────────────────────
+function initLoginForm() {
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = val('loginId').trim();
+    const pw = val('loginPw').trim();
+
+    if (id === ADMIN_ID && pw === ADMIN_PW) {
+      setAdminLogin(true);
+      updateAdminNavLabel();
+      hideMsg('loginMsg');
+      navigateTo('admin');
+    } else {
+      showMsg('loginMsg', '아이디 또는 비밀번호가 올바르지 않습니다.', 'error');
+    }
+  });
+}
+
+// ──────────────────────────────────────────
+//  관리자 대시보드
+// ──────────────────────────────────────────
+let editingId = null;  // 현재 수정 중인 ID (미사용, 향후 확장용)
+
+function initAdminPage() {
+  renderAdminStats();
+  renderOrderTable();
+}
+
+function renderAdminStats() {
+  const orders = getOrders();
+  setText('adminStatTotal', orders.length);
+  setText('adminStatIn',    orders.filter(o => o.status === 0).length);
+  setText('adminStatWait',  orders.filter(o => o.status === 1).length);
+  setText('adminStatReady', orders.filter(o => o.status === 2).length);
+  setText('adminStatDone',  orders.filter(o => o.status === 3).length);
+}
+
+function renderOrderTable(filterStatus = 'all', filterText = '') {
+  const orders = getOrders();
+  const tbody   = document.getElementById('orderTableBody');
+  const noMsg   = document.getElementById('noOrderMsg');
+
+  const filtered = orders.filter(o => {
+    const matchStatus = filterStatus === 'all' || String(o.status) === filterStatus;
+    const matchText   = !filterText ||
+      o.name.includes(filterText) ||
+      o.model.toLowerCase().includes(filterText.toLowerCase());
+    return matchStatus && matchText;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    noMsg.style.display = 'block';
+    return;
+  }
+  noMsg.style.display = 'none';
+
+  // 최신 접수 순 정렬
+  const sorted = [...filtered].sort((a, b) => b.id - a.id);
+
+  tbody.innerHTML = sorted.map(o => `
+    <tr>
+      <td style="color:var(--gray-400);font-size:12px">#${o.id}</td>
+      <td><strong>${escHtml(o.name)}</strong></td>
+      <td>${escHtml(o.model)}</td>
+      <td>****${escHtml(o.phone)}</td>
+      <td>${escHtml(o.courier)}</td>
+      <td style="font-size:12px;color:var(--gray-500)">${escHtml(o.tracking)}</td>
+      <td style="font-size:12px;white-space:nowrap">${escHtml(o.regDate)}</td>
+      <td>
+        <select data-id="${o.id}" class="status-select">
+          ${STATUS_LABELS.map((lbl, idx) =>
+            `<option value="${idx}" ${o.status === idx ? 'selected' : ''}>${lbl}</option>`
+          ).join('')}
+        </select>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-danger delete-btn" data-id="${o.id}">삭제</button>
+      </td>
+    </tr>
+  `).join('');
+
+  // 상태 변경 이벤트
+  tbody.querySelectorAll('.status-select').forEach(sel => {
+    sel.addEventListener('change', function() {
+      updateOrderStatus(Number(this.dataset.id), Number(this.value));
+    });
+  });
+
+  // 삭제 이벤트
+  tbody.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (confirm('정말 삭제하시겠습니까?')) {
+        deleteOrder(Number(this.dataset.id));
+      }
+    });
+  });
+}
+
+function updateOrderStatus(id, newStatus) {
+  const orders = getOrders();
+  const idx = orders.findIndex(o => o.id === id);
+  if (idx === -1) return;
+  orders[idx].status = newStatus;
+  saveOrders(orders);
+  renderAdminStats();
+  // 홈 통계도 갱신 (백그라운드)
+}
+
+function deleteOrder(id) {
+  const orders = getOrders().filter(o => o.id !== id);
+  saveOrders(orders);
+  renderAdminStats();
+  const filterStatus = document.getElementById('filterStatus')?.value || 'all';
+  const filterText   = document.getElementById('filterSearch')?.value || '';
+  renderOrderTable(filterStatus, filterText);
+}
+
+// ──────────────────────────────────────────
+//  관리자 신규 주문 등록
+// ──────────────────────────────────────────
+function initAdminAddForm() {
+  const toggleBtn  = document.getElementById('toggleAddForm');
+  const formWrap   = document.getElementById('addOrderForm');
+  const cancelBtn  = document.getElementById('cancelAddForm');
+  const form       = document.getElementById('adminAddForm');
+
+  toggleBtn.addEventListener('click', () => {
+    const isOpen = formWrap.style.display !== 'none';
+    formWrap.style.display = isOpen ? 'none' : 'block';
+    toggleBtn.textContent  = isOpen ? '+ 등록하기' : '✕ 닫기';
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    formWrap.style.display = 'none';
+    toggleBtn.textContent = '+ 등록하기';
+    form.reset();
+    hideMsg('addFormMsg');
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name     = val('addName').trim();
+    const phone    = val('addPhone').trim();
+    const model    = val('addModel').trim();
+    const courier  = val('addCourier').trim();
+    const tracking = val('addTracking').trim();
+    const status   = Number(val('addStatus'));
+    const memo     = val('addMemo').trim();
+
+    if (!name || !phone || !model || !courier || !tracking) {
+      showMsg('addFormMsg', '필수 항목을 모두 입력해 주세요.', 'error');
+      return;
+    }
+    if (!/^\d{4}$/.test(phone)) {
+      showMsg('addFormMsg', '휴대폰 뒤 4자리를 숫자 4개로 입력해 주세요.', 'error');
+      return;
+    }
+
+    const orders = getOrders();
+    orders.push({ id: nextId(), name, model, phone, courier, tracking, status, regDate: todayStr(), memo });
+    saveOrders(orders);
+
+    showMsg('addFormMsg', '✅ 주문이 등록되었습니다.', 'success');
+    form.reset();
+    renderAdminStats();
+    renderOrderTable(
+      document.getElementById('filterStatus').value,
+      document.getElementById('filterSearch').value
+    );
+
+    setTimeout(() => {
+      formWrap.style.display = 'none';
+      toggleBtn.textContent = '+ 등록하기';
+      hideMsg('addFormMsg');
+    }, 1500);
+  });
+}
+
+// ──────────────────────────────────────────
+//  유틸
+// ──────────────────────────────────────────
+function val(id) {
+  return document.getElementById(id)?.value ?? '';
+}
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+function showMsg(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'form-msg ' + (type || 'error');
+  el.style.display = 'block';
+}
+function hideMsg(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+function normalize(str) {
+  return str.replace(/\s/g, '').toLowerCase();
+}
+
+// ──────────────────────────────────────────
+//  전역 클릭 — data-page 네비게이션
+// ──────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  const target = e.target.closest('[data-page]');
+  if (!target) return;
+  e.preventDefault();
+  const page = target.dataset.page;
+
+  // 모바일 메뉴 닫기
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+
+  navigateTo(page);
+});
+
+// ──────────────────────────────────────────
+//  햄버거 메뉴
+// ──────────────────────────────────────────
+document.getElementById('hamburger').addEventListener('click', function() {
+  this.classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('open');
+});
+
+// ──────────────────────────────────────────
+//  로그아웃
+// ──────────────────────────────────────────
+document.getElementById('logoutBtn').addEventListener('click', function() {
+  setAdminLogin(false);
+  updateAdminNavLabel();
+  navigateTo('home');
+});
+
+// ──────────────────────────────────────────
+//  테이블 필터 이벤트
+// ──────────────────────────────────────────
+document.getElementById('filterStatus').addEventListener('change', function() {
+  renderOrderTable(this.value, document.getElementById('filterSearch').value);
+});
+document.getElementById('filterSearch').addEventListener('input', function() {
+  renderOrderTable(document.getElementById('filterStatus').value, this.value);
+});
+
+// ──────────────────────────────────────────
+//  초기화
+// ──────────────────────────────────────────
+(function init() {
+  // 폼 이벤트 등록
+  initApplyForm();
+  initInquiryForm();
+  initLoginForm();
+  initAdminAddForm();
+
+  // 초기 페이지
+  initHomePage();
+  updateAdminNavLabel();
+})();
