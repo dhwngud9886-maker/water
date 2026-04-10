@@ -49,17 +49,102 @@
     <section id="page-home" class="page active">
 
       <!-- Hero -->
-      <div class="page-hero">
-        <div class="hero-inner">
-          <div class="hero-eyebrow">실시간 현황</div>
-          <h1>투명하고 빠른<br>AS 서비스</h1>
-          <p>접수 현황과 예상 소요 기간을 실시간으로 확인하고<br>진행 상태를 언제 어디서나 추적하세요.</p>
-          <div class="hero-btns">
-            <button class="btn btn-hero-primary" data-page="apply">AS 신청하기</button>
-            <button class="btn btn-hero-ghost" data-page="inquiry">배송 조회 →</button>
-          </div>
-        </div>
-      </div>
+      <div class="page-hero home-hero">
+        <div class="container">
+          <div class="hero-split">
+
+            <!-- 좌측: 텍스트 -->
+            <div class="hero-content">
+              <div class="hero-eyebrow">정수기 · 제빙기 · 에어컨 전문</div>
+              <h1>시원하고 빠른<br>AS 서비스</h1>
+              <p>접수부터 반송까지 투명하게.<br>진행 상황을 언제든지 확인하세요.</p>
+              <div class="hero-btns">
+                <button class="btn btn-hero-primary" data-page="apply">AS 신청하기</button>
+                <button class="btn btn-hero-ghost" data-page="inquiry">배송 조회 →</button>
+              </div>
+              <div class="hero-tags">
+                <span class="hero-tag">💧 정수기</span>
+                <span class="hero-tag">🧊 제빙기</span>
+                <span class="hero-tag">❄️ 에어컨</span>
+              </div>
+            </div>
+
+            <!-- 우측: 이미지 캐러셀 -->
+            <div class="hero-visual">
+              <div class="hero-carousel" id="heroCarousel">
+
+                <div class="carousel-slides">
+
+                  <!-- ★ 슬라이드 1 — 실제 이미지 교체 방법:
+                       .slide-img.s1 에 background-image: url('images/purifier.jpg') 추가
+                       또는 아래 주석 해제 후 이미지 경로 입력 -->
+                  <div class="carousel-slide active">
+                    <div class="slide-img s1">
+                      <!-- <img src="images/purifier.jpg" alt="정수기 AS 서비스"> -->
+                      <div class="slide-overlay"></div>
+                      <div class="slide-info">
+                        <span class="slide-icon">💧</span>
+                        <span class="slide-name">정수기 AS</span>
+                        <span class="slide-en">Water Purifier</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ★ 슬라이드 2 — 제빙기 이미지 교체 -->
+                  <div class="carousel-slide">
+                    <div class="slide-img s2">
+                      <!-- <img src="images/ice.jpg" alt="제빙기 AS 서비스"> -->
+                      <div class="slide-overlay"></div>
+                      <div class="slide-info">
+                        <span class="slide-icon">🧊</span>
+                        <span class="slide-name">제빙기 AS</span>
+                        <span class="slide-en">Ice Maker</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- ★ 슬라이드 3 — 에어컨 이미지 교체 -->
+                  <div class="carousel-slide">
+                    <div class="slide-img s3">
+                      <!-- <img src="images/aircon.jpg" alt="에어컨 AS 서비스"> -->
+                      <div class="slide-overlay"></div>
+                      <div class="slide-info">
+                        <span class="slide-icon">❄️</span>
+                        <span class="slide-name">에어컨 AS</span>
+                        <span class="slide-en">Air Conditioner</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div><!-- /.carousel-slides -->
+
+                <!-- 하단 탭 도트 -->
+                <div class="carousel-nav">
+                  <button class="c-dot active" data-slide="0">
+                    <span class="c-dot-icon">💧</span>
+                    <span class="c-dot-label">정수기</span>
+                  </button>
+                  <button class="c-dot" data-slide="1">
+                    <span class="c-dot-icon">🧊</span>
+                    <span class="c-dot-label">제빙기</span>
+                  </button>
+                  <button class="c-dot" data-slide="2">
+                    <span class="c-dot-icon">❄️</span>
+                    <span class="c-dot-label">에어컨</span>
+                  </button>
+                </div>
+
+                <!-- 진행바 -->
+                <div class="carousel-progress">
+                  <div class="carousel-progress-bar" id="carouselProgress"></div>
+                </div>
+
+              </div><!-- /.hero-carousel -->
+            </div><!-- /.hero-visual -->
+
+          </div><!-- /.hero-split -->
+        </div><!-- /.container -->
+      </div><!-- /.page-hero -->
 
       <div class="container">
 

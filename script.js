@@ -570,6 +570,87 @@ document.getElementById('filterSearch').addEventListener('input', function() {
 });
 
 // ──────────────────────────────────────────
+//  히어로 이미지 캐러셀
+// ──────────────────────────────────────────
+function initCarousel() {
+  const carousel = document.getElementById('heroCarousel');
+  if (!carousel) return;
+
+  const slides    = carousel.querySelectorAll('.carousel-slide');
+  const dots      = carousel.querySelectorAll('.c-dot');
+  const progressBar = document.getElementById('carouselProgress');
+  const DURATION  = 4000; // 슬라이드 전환 간격 (ms)
+  let current     = 0;
+  let timer       = null;
+  let progressTimer = null;
+  let progressVal = 0;
+
+  // 슬라이드 이동
+  function goTo(idx) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (idx + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    resetProgress();
+  }
+
+  function next() { goTo(current + 1); }
+
+  // 진행 바 애니메이션
+  function resetProgress() {
+    clearInterval(progressTimer);
+    progressVal = 0;
+    if (progressBar) progressBar.style.width = '0%';
+    progressTimer = setInterval(() => {
+      progressVal += 100 / (DURATION / 80);
+      if (progressVal >= 100) progressVal = 100;
+      if (progressBar) progressBar.style.width = progressVal + '%';
+    }, 80);
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(next, DURATION);
+    resetProgress();
+  }
+
+  function stopAuto() {
+    clearInterval(timer);
+    clearInterval(progressTimer);
+    if (progressBar) progressBar.style.width = '0%';
+  }
+
+  // 도트 클릭
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      stopAuto();
+      goTo(i);
+      startAuto();
+    });
+  });
+
+  // 마우스 오버 시 일시정지
+  carousel.addEventListener('mouseenter', stopAuto);
+  carousel.addEventListener('mouseleave', startAuto);
+
+  // 터치 스와이프
+  let touchStartX = 0;
+  carousel.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  carousel.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      stopAuto();
+      goTo(diff > 0 ? current + 1 : current - 1);
+      startAuto();
+    }
+  }, { passive: true });
+
+  // 시작
+  startAuto();
+}
+
+// ──────────────────────────────────────────
 //  초기화
 // ──────────────────────────────────────────
 (function init() {
@@ -582,4 +663,7 @@ document.getElementById('filterSearch').addEventListener('input', function() {
   // 초기 페이지
   initHomePage();
   updateAdminNavLabel();
+
+  // 캐러셀 시작
+  initCarousel();
 })();
