@@ -8,8 +8,8 @@
 const ADMIN_ID = 'admin';
 const ADMIN_PW = '1234';
 
-const STATUS_LABELS = ['입고완료', 'AS대기중', 'AS완료후발송대기중', '발송완료'];
-const STATUS_ICONS  = ['📥', '🔧', '📦', '🚚'];
+const STATUS_LABELS = ['신청완료', '입고완료', 'AS대기중', 'AS완료후발송대기중', '발송완료'];
+const STATUS_ICONS  = ['📥', '📥', '🔧', '📦', '🚚'];
 const STATUS_BADGE_CLASS = ['badge-0', 'badge-1', 'badge-2', 'badge-3'];
 
 // ── 기본 모델 목록 (관리자가 언제든 수정 가능) ──
@@ -196,11 +196,9 @@ function initApplyForm() {
     const name     = val('applyName').trim();
     const phone    = val('applyPhone').trim();
     const model    = val('applyModel').trim();
-    const courier  = val('applyCourier').trim();
-    const tracking = val('applyTracking').trim();
     const memo     = val('applyMemo').trim();
 
-    if (!name || !phone || !model || !courier || !tracking) {
+    if (!name || !phone || !model) {
       showMsg('applyMsg', '모든 필수 항목을 입력해 주세요.', 'error');
       return;
     }
@@ -219,8 +217,17 @@ function initApplyForm() {
       regDate: todayStr(),
       memo
     };
-    orders.push(newOrder);
-    saveOrders(orders);
+     
+const pending = getPending();
+pending.push({
+  id: Date.now(),
+  name,
+  phone,
+  model,
+  memo,
+  reqDate: todayStr()
+});
+savePending(pending);
 
     // 성공 화면
     document.getElementById('applyFormCard').style.display = 'none';
@@ -830,3 +837,10 @@ function initCarousel() {
   // 캐러셀 시작
   initCarousel();
 })();
+
+function getPending() {
+  return JSON.parse(localStorage.getItem('asPending') || '[]');
+}
+function savePending(data) {
+  localStorage.setItem('asPending', JSON.stringify(data));
+}
