@@ -108,7 +108,7 @@ function updateAdminNavLabel() {
   if (isAdminLoggedIn()) {
     btns.forEach(b => { b.textContent = '⚙ 관리자'; });
   } else {
-    btns.forEach(b => { b.textContent = '🔐 관리자'; });
+    btns.forEach(b => { b.textContent = '관리자'; });
   }
 }
 
@@ -238,6 +238,10 @@ function resetInquiry() {
 }
 
 function renderResult(order) {
+  // 제목
+  const titleEl = document.getElementById('resultTitle');
+  if (titleEl) titleEl.textContent = `${escHtml(order.name)} · ${escHtml(order.model)}`;
+
   // 배지
   const badge = document.getElementById('resultBadge');
   badge.textContent = STATUS_LABELS[order.status];
