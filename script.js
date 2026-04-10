@@ -521,6 +521,7 @@ async function acceptPendingRequest(docId) {
     phone: target.phone,
     courier: '',
     tracking: '',
+    chargeType: '',
     status: 0,
     regDate: todayStr(),
     memo: target.memo || '',
@@ -565,6 +566,7 @@ async function renderOrderTable(filterStatus = 'all', filterText = '') {
       <td>${escHtml(formatPhone(o.phone))}</td>
       <td>${escHtml(o.courier || '')}</td>
       <td style="font-size:12px;color:var(--gray-500)">${escHtml(o.tracking || '')}</td>
+      <td>${escHtml(o.chargeType || '')}</td>
       <td style="font-size:12px;white-space:nowrap">${escHtml(o.regDate)}</td>
       <td>
         <select data-id="${o.docId}" class="status-select">
@@ -691,17 +693,18 @@ function initAdminAddForm() {
 
     try {
       await addOrder({
-        orderNo: await nextOrderNo(),
-        name,
-        model,
-        phone: phone.replace(/\D/g, ''),
-        courier: status === 4 ? courier : '',
-        tracking: status === 4 ? tracking : '',
-        status,
-        regDate: todayStr(),
-        memo,
-        createdAt: Date.now()
-      });
+  orderNo: await nextOrderNo(),
+  name,
+  model,
+  phone: phone.replace(/\D/g, ''),
+  courier: status === 4 ? courier : '',
+  tracking: status === 4 ? tracking : '',
+  chargeType,
+  status,
+  regDate: todayStr(),
+  memo,
+  createdAt: Date.now()
+});
 
       showMsg('addFormMsg', '✅ 주문이 등록되었습니다.', 'success');
       form.reset();
