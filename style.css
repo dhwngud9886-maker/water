@@ -788,6 +788,111 @@ input,select,textarea{font-family:inherit;}
 .no-data{text-align:center;padding:36px;font-size:14px;color:var(--t3);}
 
 /* ============================================================
+   MODEL MANAGER  (관리자 모델명 관리)
+   ============================================================ */
+
+/* 헤더 왼쪽 그룹 (제목 + 뱃지) */
+.block-header-left {
+  display:flex;align-items:center;gap:10px;
+}
+.model-count-badge {
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:32px;padding:3px 10px;
+  background:var(--sky-soft);color:var(--sky-dark);
+  border:1px solid rgba(14,165,233,0.2);
+  border-radius:var(--r-full);
+  font-size:12px;font-weight:700;
+}
+
+/* 모델 추가 입력줄 */
+.model-add-row {
+  display:flex;gap:10px;margin-bottom:12px;
+}
+.model-add-row input {
+  flex:1;padding:10px 14px;
+  background:var(--bg);
+  border:1.5px solid transparent;border-radius:var(--r-sm);
+  font-size:14px;font-family:inherit;color:var(--t1);
+  outline:none;transition:all .18s var(--ease);
+}
+.model-add-row input:focus {
+  background:var(--white);border-color:var(--sky);
+  box-shadow:0 0 0 3px rgba(14,165,233,0.12);
+}
+.model-add-row input::placeholder{color:var(--t3);}
+
+/* 모델 태그 목록 */
+.model-list {
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:16px;
+  background:var(--bg);
+  border-radius:var(--r);
+  min-height:54px;
+  border:1.5px dashed rgba(14,165,233,0.2);
+}
+.model-list:empty::after {
+  content:'등록된 모델이 없습니다. 위에서 추가해 주세요.';
+  font-size:13px;color:var(--t3);
+  display:flex;align-items:center;width:100%;
+}
+
+.model-tag {
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 14px 7px 16px;
+  background:var(--white);
+  border:1.5px solid rgba(14,165,233,0.2);
+  border-radius:var(--r-full);
+  font-size:13px;font-weight:600;color:var(--sky-dark);
+  box-shadow:var(--sh-xs);
+  transition:all .15s var(--ease);
+}
+.model-tag:hover {
+  border-color:rgba(239,68,68,0.3);
+  background:rgba(239,68,68,0.04);
+}
+.model-tag:hover .model-tag-del { color:var(--red); }
+
+.model-tag-del {
+  display:flex;align-items:center;justify-content:center;
+  width:16px;height:16px;
+  background:none;border:none;cursor:pointer;
+  color:var(--t3);font-size:14px;font-weight:700;
+  line-height:1;padding:0;flex-shrink:0;
+  transition:color .15s;border-radius:50%;
+}
+
+/* 관리자 안내 푸터 */
+.model-manager-footer {
+  margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--divider);
+}
+.model-hint {
+  font-size:12.5px;color:var(--t3);
+}
+
+/* 접힌 상태 미리보기 */
+.model-preview { margin-top:12px; }
+.model-preview-list {
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.model-preview-chip {
+  display:inline-block;
+  padding:4px 12px;
+  background:var(--sky-pale);
+  border:1px solid rgba(14,165,233,0.15);
+  border-radius:var(--r-full);
+  font-size:12px;font-weight:500;color:var(--t2);
+}
+.model-preview-more {
+  display:inline-block;
+  padding:4px 12px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r-full);
+  font-size:12px;font-weight:600;color:var(--t3);
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .footer{

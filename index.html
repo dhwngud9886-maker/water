@@ -322,7 +322,9 @@
             </div>
             <div class="form-group">
               <label for="applyModel">모델명 <span class="req">*</span></label>
-              <input type="text" id="applyModel" placeholder="Galaxy S24 Ultra, iPhone 15 Pro …" />
+              <select id="applyModel">
+                <option value="">모델명을 선택해 주세요</option>
+              </select>
             </div>
             <div class="form-row">
               <div class="form-group">
@@ -391,7 +393,9 @@
             </div>
             <div class="form-group">
               <label for="inqModel">모델명 <span class="req">*</span></label>
-              <input type="text" id="inqModel" placeholder="Galaxy S24 Ultra" />
+              <select id="inqModel">
+                <option value="">모델명을 선택해 주세요</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="inqPhone">휴대폰번호 뒤 4자리 <span class="req">*</span></label>
@@ -516,6 +520,38 @@
           </div>
         </div>
 
+        <!-- 모델명 관리 -->
+        <div class="section-block">
+          <div class="block-header">
+            <div class="block-header-left">
+              <h2 class="section-title no-margin">모델명 관리</h2>
+              <span class="model-count-badge" id="modelCountBadge">0개</span>
+            </div>
+            <button class="btn btn-sm btn-secondary" id="toggleModelManager">목록 편집</button>
+          </div>
+
+          <div id="modelManagerBody" style="display:none">
+            <!-- 모델 추가 입력 -->
+            <div class="model-add-row">
+              <input type="text" id="newModelInput" placeholder="새 모델명을 입력하세요 (예: 직수형 정수기 A)" maxlength="40" />
+              <button class="btn btn-sm btn-primary" id="addModelBtn">+ 추가</button>
+            </div>
+            <div id="modelAddMsg" class="form-msg error" style="display:none"></div>
+
+            <!-- 모델 목록 -->
+            <div class="model-list" id="modelList"></div>
+
+            <div class="model-manager-footer">
+              <span class="model-hint">💡 모델명을 삭제해도 기존 접수 내역에는 영향이 없습니다.</span>
+            </div>
+          </div>
+
+          <!-- 접힌 상태 미리보기 -->
+          <div id="modelPreview" class="model-preview">
+            <div class="model-preview-list" id="modelPreviewList"></div>
+          </div>
+        </div>
+
         <!-- 주문 등록 -->
         <div class="section-block">
           <div class="block-header">
@@ -536,7 +572,9 @@
               </div>
               <div class="form-group">
                 <label>모델명 <span class="req">*</span></label>
-                <input type="text" id="addModel" placeholder="제품 모델명" />
+                <select id="addModel">
+                  <option value="">모델명을 선택해 주세요</option>
+                </select>
               </div>
               <div class="form-row">
                 <div class="form-group">
