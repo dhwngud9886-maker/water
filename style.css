@@ -927,7 +927,7 @@ input,select,textarea{font-family:inherit;}
   top:50%;
   transform:translateY(-50%);
   z-index:900;
-  width:140px;
+  width:280px;
   transition:opacity .25s var(--ease);
 }
 .blog-banner.hidden{
