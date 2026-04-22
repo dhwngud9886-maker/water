@@ -324,17 +324,20 @@ input,select,textarea{font-family:inherit;}
   background-image: url('정수기as.png');
   background-size: cover;
   background-position: center;
+   background-repeat: no-repeat;
 }
 .slide-img.s2{
   background-image: url('제빙기as.png');
   background-size: cover;
   background-position: center;
+   background-repeat: no-repeat;
 }
 
 .slide-img.s3{
   background-image: url('에어컨as.png');
   background-size: cover;
   background-position: center;
+   background-repeat: no-repeat;
 }
 
 /* 슬라이드 오버레이 */
