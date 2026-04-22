@@ -321,19 +321,20 @@ input,select,textarea{font-family:inherit;}
 
 /* 플레이스홀더 그라디언트 (이미지 교체 전 표시) */
 .slide-img.s1{
-  background:
-    radial-gradient(ellipse 60% 70% at 60% 80%, rgba(6,182,212,0.35) 0%, transparent 60%),
-    linear-gradient(145deg, #BAE6FD 0%, #7DD3FC 40%, #38BDF8 100%);
+  background-image: url('정수기as.png');
+  background-size: cover;
+  background-position: center;
 }
 .slide-img.s2{
-  background:
-    radial-gradient(ellipse 50% 60% at 50% 40%, rgba(165,243,252,0.5) 0%, transparent 55%),
-    linear-gradient(145deg, #CFFAFE 0%, #A5F3FC 40%, #22D3EE 100%);
+  background-image: url('제빙기as.png');
+  background-size: cover;
+  background-position: center;
 }
+
 .slide-img.s3{
-  background:
-    radial-gradient(ellipse 70% 50% at 30% 60%, rgba(147,197,253,0.4) 0%, transparent 60%),
-    linear-gradient(145deg, #DBEAFE 0%, #93C5FD 40%, #60A5FA 100%);
+  background-image: url('에어컨as.png');
+  background-size: cover;
+  background-position: center;
 }
 
 /* 슬라이드 오버레이 */
