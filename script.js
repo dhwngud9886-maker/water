@@ -560,14 +560,14 @@ async function renderOrderTable(filterStatus = 'all', filterText = '') {
 
   tbody.innerHTML = filtered.map(o => `
     <tr>
-      <td style="color:var(--gray-400);font-size:12px">#${escHtml(o.orderNo || '')}</td>
-      <td><strong>${escHtml(o.name)}</strong></td>
-      <td>${escHtml(o.model)}</td>
-      <td>${escHtml(formatPhone(o.phone))}</td>
-      <td>${escHtml(o.courier || '')}</td>
-      <td style="font-size:12px;color:var(--gray-500)">${escHtml(o.tracking || '')}</td>
-      <td>${escHtml(o.chargeType || '')}</td>
-      <td style="font-size:12px;white-space:nowrap">${escHtml(o.regDate)}</td>
+      <td>#${escHtml(o.orderNo || '')}</td>
+      <td data-label="이름"><strong>${escHtml(o.name)}</strong></td>
+      <td data-label="모델명">${escHtml(o.model)}</td>
+      <td data-label="연락처">${escHtml(formatPhone(o.phone))}</td>
+      <td data-label="택배사">${escHtml(o.courier || '-')}</td>
+      <td data-label="송장번호">${escHtml(o.tracking || '-')}</td>
+      <td data-label="유상/무상">${escHtml(o.chargeType || '-')}</td>
+      <td data-label="접수일">${escHtml(o.regDate)}</td>
       <td>
         <select data-id="${o.docId}" class="status-select">
           ${STATUS_LABELS.map((lbl, idx) =>
@@ -958,6 +958,15 @@ function initCarousel() {
   initHomePage();
   updateAdminNavLabel();
   initCarousel();
+
+  /* 블로그 배너 닫기 (모바일) */
+  const blogBannerClose = document.getElementById('blogBannerClose');
+  if (blogBannerClose) {
+    blogBannerClose.addEventListener('click', () => {
+      document.getElementById('blogBanner')?.classList.add('hidden');
+      document.querySelector('.footer')?.style.setProperty('padding-bottom', '');
+    });
+  }
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
